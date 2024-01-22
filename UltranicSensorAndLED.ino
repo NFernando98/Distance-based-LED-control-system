@@ -43,15 +43,17 @@ void loop() {
   Serial.print(" cm\t Smoothed Distance: ");
   Serial.println(averageDistance);
 
-  // Adjusted the threshold value based on your system's requirements
-  if (averageDistance <= 50) {
-    // If average distance is below the threshold, turn off the LED
-    analogWrite(led, 0);
+  // Apply a simple threshold for turning off the LED
+  if (averageDistance <= 0) {
+    analogWrite(led, 0);  // Turn off the LED if there is no object
   } else {
-    brightness = map(averageDistance, 50, 200, 0, 255);  // Adjusted mapping based on expected distance range
-    brightness = constrain(brightness, 0, 255);
+    // Map the distance to a brightness value between 0 and 255 (reverse mapping)
+    brightness = map(averageDistance, 0, 100, 255, 0);
+    
+    // Apply the moving average filter to smooth out brightness changes
+    brightness = constrain(brightness, 0, 255);  // Ensure brightness is within valid range
     analogWrite(led, brightness);
   }
 
-  delay(1000);
+  delay(100);  // Shorten the delay for more frequent updates
 }
